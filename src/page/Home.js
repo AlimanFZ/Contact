@@ -114,7 +114,7 @@ const Home = ({ navigation }) => {
         />
       )}
 
-      <CreateUser onPress={() => navigation.navigate("Daftar")} />
+      <CreateUser onPress={() => navigation.navigate("Create")} />
       {loading && <Loading />}
       {errorMassage && <ErrorMassage />}
     </View>
