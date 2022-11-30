@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { StyleSheet, Text, View, Button, Alert, TextInput } from "react-native";
 import { getDatabase, update, ref } from "firebase/database";
 import app from "../firebase";
@@ -8,9 +8,9 @@ import Loading from "../component/Atom/Loading";
 const Update = ({ navigation: { goBack }, route: { params } }) => {
 
   //! useState
-  const [name, setName] = React.useState(params?.name);
-  const [number, setNumber] = React.useState(params?.number);
-  const [loading, setLoading] = React.useState(false);
+  const [name, setName] = useState(params?.name);
+  const [number, setNumber] = useState(params?.number);
+  const [loading, setLoading] = useState(false);
 
   //! Update Data
   const onUpdate = () => {

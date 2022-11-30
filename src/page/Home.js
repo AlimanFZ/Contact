@@ -3,6 +3,7 @@ import { StyleSheet, View, FlatList, Alert, Text, Button } from "react-native";
 import { UserContact, CreateUser, InsertContact } from "../component";
 import { Loading, ErrorMassage } from "../component";
 import { getDatabase, ref, onValue, update, query, orderByChild, startAt, endAt, } from "firebase/database";
+import auth from '@react-native-firebase/auth';
 import app from "../firebase";
 
 
@@ -28,6 +29,10 @@ const Home = ({ navigation }) => {
       }
       setLoading(false);
     });
+  };
+
+  const signOutAccount = () => {
+    auth().signOut().then(t => navigation.replace("Login") ).catch(error => { console.log(error) })
   };
 
   //! Insert Data
@@ -82,7 +87,7 @@ const Home = ({ navigation }) => {
         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Slamet Sulistyo</Text>
       </View>
       <View style={{ marginHorizontal: 25 }}>
-        <Button title="LOGOUT" onPress={() => { navigation.navigate("Splash") }} />
+        <Button title="LOGOUT" onPress={() => { signOutAccount() }} />
       </View>
 
       <View style={styles.search}>

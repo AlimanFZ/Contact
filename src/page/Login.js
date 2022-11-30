@@ -1,16 +1,66 @@
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
-import React from 'react'
+import { GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin"
+import auth from "@react-native-firebase/auth"
+import React, { useState, useEffect } from 'react';
 
 const Login = ({ navigation }) => {
-    // Login Auth Google Firebase
-    return (
-        <View style={styles.b1}>
-            <Button
-                title="LOGIN WITH GOOGLE"
-                onPress={() => { navigation.navigate("Home") }}
-            />
-        </View>
-    )
+
+    // Set an initializing state whilst Firebase connects
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState();
+
+    // Handle user state changes
+    function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+
+    async function onGoogleButtonPress() {
+        // Check if your device supports Google Play
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+        // Get the users ID token
+        const { idToken } = await GoogleSignin.signIn();
+      
+        // Create a Google credential with the token
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      
+        const user_sign = auth().signInWithCredential(googleCredential) 
+        user_sign.then(async user => {
+            navigation.replace('Home')
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    }
+
+    useEffect(() => {
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber; // unsubscribe on unmount
+    }, []);
+
+    if (initializing) return null;
+
+
+    if(!user){
+        return (
+            <View style={styles.b1}>
+                <GoogleSigninButton
+                onPress={ onGoogleButtonPress} 
+                ></GoogleSigninButton>
+                {/* <Button
+                    title="LOGIN WITH GOOGLE"
+                    onPress={() => { navigation.navigate("Home") }}
+                /> */}
+            </View> 
+        )
+    }
+    return (<View style={styles.b1}>
+        <Text style={styles.text}>Welcome, {user.displayName}</Text>
+        <Button
+            title="Lanjutkan"
+            onPress={() => { navigation.navigate("Home") }}
+        /> 
+    </View>)
 }
 
 export default Login
@@ -22,4 +72,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white'
     },
+    text : {
+        fontSize: 20,
+        fontWeight: '700'
+    },
+    button : {
+        marginTop: 12,
+        color: 'white',
+        backgroundColor: 'blue'
+    }
 })
