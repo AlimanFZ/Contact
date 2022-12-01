@@ -91,7 +91,7 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={{ marginHorizontal: 20, marginVertical: 20 }}>
-        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{ name }</Text>
+        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{ `Welcome, ${name}` }</Text>
       </View>
       <View style={{ marginHorizontal: 25 }}>
         <Button title="LOGOUT" onPress={async () => { await signOutAccount() }} />

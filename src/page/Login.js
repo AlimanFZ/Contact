@@ -54,7 +54,7 @@ const Login = ({ navigation }) => {
     }
     
     return (<View style={styles.b1}>
-        <Text style={styles.text}>Welcome, {user.displayName}</Text>
+        <Text style={styles.text}>Loading...</Text>
         {/* <Button
             title="Login"
             onPress={async () => { 
