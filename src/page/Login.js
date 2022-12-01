@@ -2,13 +2,13 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
 import { GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin"
 import auth from "@react-native-firebase/auth"
 import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Login = ({ navigation }) => {
 
     // Set an initializing state whilst Firebase connects
     const [initializing, setInitializing] = useState(true);
     const [user, setUser] = useState();
-
     // Handle user state changes
     function onAuthStateChanged(user) {
         setUser(user);
@@ -24,13 +24,11 @@ const Login = ({ navigation }) => {
         // Create a Google credential with the token
         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       
-        const user_sign = auth().signInWithCredential(googleCredential) 
-        user_sign.then(async user => {
+        const user_sign = await auth().signInWithCredential(googleCredential) 
+        if(user_sign.user != null){
+            await AsyncStorage.setItem('user', JSON.stringify(user_sign.user))
             navigation.replace('Home')
-        })
-        .catch(error => {
-            console.log(error)
-        })
+        }
     }
 
     useEffect(() => {
@@ -45,7 +43,7 @@ const Login = ({ navigation }) => {
         return (
             <View style={styles.b1}>
                 <GoogleSigninButton
-                onPress={ onGoogleButtonPress} 
+                onPress={async () => { await onGoogleButtonPress() }} 
                 ></GoogleSigninButton>
                 {/* <Button
                     title="LOGIN WITH GOOGLE"
@@ -54,12 +52,15 @@ const Login = ({ navigation }) => {
             </View> 
         )
     }
+    
     return (<View style={styles.b1}>
         <Text style={styles.text}>Welcome, {user.displayName}</Text>
-        <Button
-            title="Lanjutkan"
-            onPress={() => { navigation.navigate("Home") }}
-        /> 
+        {/* <Button
+            title="Login"
+            onPress={async () => { 
+                await AsyncStorage.setItem('user', JSON.stringify({name : 'Ucok'}))
+                navigation.navigate("Home") }}
+        />  */}
     </View>)
 }
 

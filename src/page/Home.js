@@ -5,7 +5,7 @@ import { Loading, ErrorMassage } from "../component";
 import { getDatabase, ref, onValue, update, query, orderByChild, startAt, endAt, } from "firebase/database";
 import auth from '@react-native-firebase/auth';
 import app from "../firebase";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = ({ navigation }) => {
 
@@ -14,6 +14,7 @@ const Home = ({ navigation }) => {
   const [loading, setLoading] = React.useState(false);
   const [errorMassage, setErrorMassage] = React.useState(false);
   const [findParams, setFindParams] = React.useState("");
+  const [name, setName] = React.useState("")
 
   //! GET Data
   const getData = () => {
@@ -31,8 +32,10 @@ const Home = ({ navigation }) => {
     });
   };
 
-  const signOutAccount = () => {
-    auth().signOut().then(t => navigation.replace("Login") ).catch(error => { console.log(error) })
+  const signOutAccount = async () => {
+    await auth().signOut()
+    await AsyncStorage.clear()
+    navigation.replace('Login')
   };
 
   //! Insert Data
@@ -77,6 +80,10 @@ const Home = ({ navigation }) => {
 
   //! Asynchronus
   React.useEffect(() => {
+    AsyncStorage.getItem('user').then(v => {
+      let data = JSON.parse(v)
+      setName(data.displayName)
+    })
     getData();
   }, []);
 
@@ -84,10 +91,10 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={{ marginHorizontal: 20, marginVertical: 20 }}>
-        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Slamet Sulistyo</Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{ name }</Text>
       </View>
       <View style={{ marginHorizontal: 25 }}>
-        <Button title="LOGOUT" onPress={() => { signOutAccount() }} />
+        <Button title="LOGOUT" onPress={async () => { await signOutAccount() }} />
       </View>
 
       <View style={styles.search}>

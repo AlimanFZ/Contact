@@ -1,14 +1,21 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import { contactIcon } from "../assets";
-import auth from "@react-native-firebase/auth"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Splash = ({ navigation }) => {
 
     useEffect(() => {
         setTimeout(() => {
-            navigation.replace('Login')
+            AsyncStorage.getItem('user').then(v => {
+                let data = JSON.parse(v)
+                if(data != null || data != undefined){
+                    navigation.replace('Home')
+                }else{
+                    navigation.replace('Login')
+                }
+            })
         }, 2000);
     }, [navigation])
 
